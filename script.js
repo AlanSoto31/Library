@@ -20,7 +20,7 @@ function printBooks(arr){
     let li1 = document.createElement('li');
     let li2 = document.createElement('li');
     let li3 = document.createElement('li');
-    let status = document.createElement('button');
+    let statusBtn = document.createElement('button');
     let deleteBtn = document.createElement('button');
 
     div.classList.add('card', 'm-5', 'border', 'border-dark', 'border-2', 'text-center');
@@ -29,7 +29,7 @@ function printBooks(arr){
     li1.classList.add('list-group-item');
     li2.classList.add('list-group-item');
     li3.classList.add('list-group-item');
-    status.classList.add('list-group-item');
+    statusBtn.classList.add('list-group-item');
     deleteBtn.classList.add('delete-btn', 'btn-danger');
     
     listCon.appendChild(div);
@@ -41,14 +41,20 @@ function printBooks(arr){
     li2.textContent = item.author;
     ul.appendChild(li3);
     li3.textContent = item.pages;
-    ul.appendChild(status);
-    status.textContent = 'Not read yet!';
-    status.addEventListener('click',() => {
-      if (status.textContent == 'I read it!') {
-        status.textContent = 'Not read yet!'
-      } else {
-        status.textContent = 'I read it!';
-      }
+    ul.appendChild(statusBtn);
+    if(item.read == 'true'){
+      statusBtn.textContent = 'I read it!'
+    } else {
+      statusBtn.textContent = 'Not read yet!'
+    }
+    statusBtn.addEventListener('click',() => {
+     if(item.read == 'true'){
+      item['read'] = 'false'
+      statusBtn.textContent = 'Not read yet!'
+     } else {
+      item['read'] = 'true'
+      statusBtn.textContent = 'I read it!';
+    }
     })
 
     deleteBtn.textContent = 'Delete Book'
@@ -61,14 +67,8 @@ function printBooks(arr){
 
 const deleteButtons = document.querySelectorAll('.btn-danger');
 
-// deleteBtn.addEventListener('click', () => {
-//     deleteButtons.map((item, index) => {
-//       myLibrary.splice(index, 1)
-//     })
-// })
-
-const book1 = new Book('The Hobbit', 'R.R.', '564', 'no');
-const book2 = new Book('It', 'Stephen King', '365', 'yes');
+const book1 = new Book('The Hobbit', 'R.R.', '564', 'false');
+const book2 = new Book('It', 'Stephen King', '365', 'true');
 
 addBookToLibrary(book1);
 addBookToLibrary(book2);
@@ -79,9 +79,24 @@ const form = document.querySelector('form')
 btn.addEventListener('click', () => {
   form.classList.toggle('d-none');
 })
+
+
 //DOM Manipulation
 
 let listCon = document.getElementById('book-list-con');
+form.addEventListener('submit', addBook);
+
+function addBook(e){
+  e.preventDefault();
+  let title = document.getElementById('title');
+  let author = document.getElementById('author');
+  let pages = document.getElementById('pages');
+  let read = document.getElementById('status');
+  let book = new Book(title.value, author.value, pages.value, read.value);
+  addBookToLibrary(book);
+  printBooks(myLibrary);
+  form.reset();
+  form.classList.toggle('d-none');
+}
 
 printBooks(myLibrary);
-
