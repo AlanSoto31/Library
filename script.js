@@ -1,5 +1,6 @@
 let myLibrary = [];
 
+
 function Book(title, author, pages, read) {
   this.title = title;
   this.author = author;
@@ -21,7 +22,7 @@ function printBooks(arr){
     let li2 = document.createElement('li');
     let li3 = document.createElement('li');
     let statusBtn = document.createElement('button');
-    let deleteBtn = document.createElement('button');
+    let deleteBtn = document.createElement('button');yLibrary = JSON.parse(localStorage.getItem('myLibrary2'))
 
     div.classList.add('card', 'm-5', 'border', 'border-dark', 'border-2', 'text-center');
     div.setAttribute('id', `book${index}`);
@@ -80,6 +81,23 @@ btn.addEventListener('click', () => {
   form.classList.toggle('d-none');
 })
 
+// Storaging Objects
+
+function storageBook(arr) {
+    let arrString = JSON.stringify(arr);
+    localStorage.setItem('myLibrary2', arrString);
+}
+
+/*
+function printBooksFromLocalStorage (book){
+  let div = document.createElement('div');
+  div.innerHTML = 
+  `
+  <h1>${book.title}</h1>
+  `;
+  listCon.appendChild(div);
+}
+*/
 
 //DOM Manipulation
 
@@ -94,9 +112,15 @@ function addBook(e){
   let read = document.getElementById('status');
   let book = new Book(title.value, author.value, pages.value, read.value);
   addBookToLibrary(book);
+  storageBook(myLibrary);
   printBooks(myLibrary);
   form.reset();
   form.classList.toggle('d-none');
+  
 }
 
+myLibrary = JSON.parse(localStorage.getItem('myLibrary2'));
 printBooks(myLibrary);
+
+
+
