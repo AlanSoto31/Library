@@ -61,6 +61,7 @@ function printBooks(arr){
     deleteBtn.textContent = 'Delete Book'
     deleteBtn.addEventListener('click', () => {
       arr.splice(index,1);
+      localStorage.clear();
       printBooks(arr);
     })
   });
@@ -70,9 +71,6 @@ const deleteButtons = document.querySelectorAll('.btn-danger');
 
 const book1 = new Book('The Hobbit', 'R.R.', '564', 'false');
 const book2 = new Book('It', 'Stephen King', '365', 'true');
-
-addBookToLibrary(book1);
-addBookToLibrary(book2);
 
 const btn = document.querySelector('#add-btn');
 const form = document.querySelector('form')
@@ -116,10 +114,15 @@ function addBook(e){
   printBooks(myLibrary);
   form.reset();
   form.classList.toggle('d-none');
-  
 }
 
-myLibrary = JSON.parse(localStorage.getItem('myLibrary2'));
+if(localStorage.getItem('myLibrary2') === null){
+  addBookToLibrary(book1);
+  addBookToLibrary(book2);
+} else {
+  myLibrary = JSON.parse(localStorage.getItem('myLibrary2'));
+}
+
 printBooks(myLibrary);
 
 
