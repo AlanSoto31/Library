@@ -59,10 +59,11 @@ function printBooks(arr){
     })
 
     deleteBtn.textContent = 'Delete Book'
-    deleteBtn.addEventListener('click', () => {
-      arr.splice(index,1);
-      localStorage.clear();
-      printBooks(arr);
+    deleteBtn.addEventListener('click', (e) => {
+      // arr.splice(index,1);
+      removeBook(arr[index].title)
+      console.log(arr[index].title)
+      // printBooks(arr);
     })
   });
 }
@@ -123,6 +124,19 @@ if(localStorage.getItem('myLibrary2') === null){
   myLibrary = JSON.parse(localStorage.getItem('myLibrary2'));
 }
 
+function removeBook (bookName) {
+  const books = JSON.parse(localStorage.getItem('myLibrary2'))
+
+  books.forEach((book, index) => {
+    if(book.title === bookName) {
+      books.splice(index, 1);
+    }
+  })
+
+  localStorage.setItem('myLibrary2', JSON.stringify(books));
+  printBooks(books);
+}
+ 
 printBooks(myLibrary);
 
 
