@@ -1,6 +1,5 @@
 let myLibrary = [];
 
-
 function Book(title, author, pages, read) {
   this.title = title;
   this.author = author;
@@ -12,17 +11,43 @@ function addBookToLibrary(book) {
   myLibrary.push(book);
 }
 
-function printBooks(arr){
-  listCon.innerHTML = '';
-  arr.map((item, index) => {
+// Local Storage
 
-    let div = document.createElement('div');
-    let ul = document.createElement('ul');
-    let li1 = document.createElement('li');
-    let li2 = document.createElement('li');
-    let li3 = document.createElement('li');
-    let statusBtn = document.createElement('button');
-    let deleteBtn = document.createElement('button');yLibrary = JSON.parse(localStorage.getItem('myLibrary2'))
+function storageBook(arr) {
+  const arrString = JSON.stringify(arr);
+  localStorage.setItem('myLibrary2', arrString);
+}
+
+function removeBook(bookName) {
+  const books = JSON.parse(localStorage.getItem('myLibrary2'));
+
+  books.forEach((book, index) => {
+    if (book.title === bookName) {
+      books.splice(index, 1);
+    }
+  });
+
+  localStorage.setItem('myLibrary2', JSON.stringify(books));
+  // printBooks(books);
+}
+
+const listCon = document.getElementById('book-list-con');
+const book1 = new Book('The Hobbit', 'R.R.', '564', 'false');
+const book2 = new Book('It', 'Stephen King', '365', 'true');
+const btn = document.querySelector('#add-btn');
+const form = document.querySelector('form');
+
+function printBooks(arr) {
+  listCon.innerHTML = '';
+  arr.forEach((item, index) => {
+    const div = document.createElement('div');
+    const ul = document.createElement('ul');
+    const li1 = document.createElement('li');
+    const li2 = document.createElement('li');
+    const li3 = document.createElement('li');
+    const statusBtn = document.createElement('button');
+    const deleteBtn = document.createElement('button');
+    // yLibrary = JSON.parse(localStorage.getItem('myLibrary2'));
 
     div.classList.add('card', 'm-5', 'border', 'border-dark', 'border-2', 'text-center');
     div.setAttribute('id', `book${index}`);
@@ -32,7 +57,7 @@ function printBooks(arr){
     li3.classList.add('list-group-item');
     statusBtn.classList.add('list-group-item');
     deleteBtn.classList.add('delete-btn', 'btn-danger');
-    
+
     listCon.appendChild(div);
     div.appendChild(ul);
     div.appendChild(deleteBtn);
@@ -43,73 +68,44 @@ function printBooks(arr){
     ul.appendChild(li3);
     li3.textContent = item.pages;
     ul.appendChild(statusBtn);
-    if(item.read == 'true'){
-      statusBtn.textContent = 'I read it!'
-    } else {
-      statusBtn.textContent = 'Not read yet!'
-    }
-    statusBtn.addEventListener('click',() => {
-     if(item.read == 'true'){
-      item['read'] = 'false'
-      statusBtn.textContent = 'Not read yet!'
-     } else {
-      item['read'] = 'true'
+    if (item.read === 'true') {
       statusBtn.textContent = 'I read it!';
+    } else {
+      statusBtn.textContent = 'Not read yet!';
     }
-    })
-
-    deleteBtn.textContent = 'Delete Book'
-    deleteBtn.addEventListener('click', (e) => {
-      // arr.splice(index,1);
-      removeBook(arr[index].title)
-      console.log(arr[index].title)
-      // printBooks(arr);
-    })
+    statusBtn.addEventListener('click', () => {
+      if (item.read === 'true') {
+        item.read = 'false';
+        statusBtn.textContent = 'Not read yet!';
+      } else {
+        item.read = 'true';
+        statusBtn.textContent = 'I read it!';
+      }
+    });
+    deleteBtn.textContent = 'Delete Book';
   });
 }
 
-const deleteButtons = document.querySelectorAll('.btn-danger');
-
-const book1 = new Book('The Hobbit', 'R.R.', '564', 'false');
-const book2 = new Book('It', 'Stephen King', '365', 'true');
-
-const btn = document.querySelector('#add-btn');
-const form = document.querySelector('form')
+listCon.addEventListener('click', (e) => {
+  if (e.target.classList.contains('delete-btn')) {
+    removeBook(e.target.previousElementSibling.firstChild.textContent);
+    e.target.parentElement.remove();
+  }
+});
 
 btn.addEventListener('click', () => {
   form.classList.toggle('d-none');
-})
+});
 
-// Storaging Objects
+// DOM Manipulation
 
-function storageBook(arr) {
-    let arrString = JSON.stringify(arr);
-    localStorage.setItem('myLibrary2', arrString);
-}
-
-/*
-function printBooksFromLocalStorage (book){
-  let div = document.createElement('div');
-  div.innerHTML = 
-  `
-  <h1>${book.title}</h1>
-  `;
-  listCon.appendChild(div);
-}
-*/
-
-//DOM Manipulation
-
-let listCon = document.getElementById('book-list-con');
-form.addEventListener('submit', addBook);
-
-function addBook(e){
+function addBook(e) {
   e.preventDefault();
-  let title = document.getElementById('title');
-  let author = document.getElementById('author');
-  let pages = document.getElementById('pages');
-  let read = document.getElementById('status');
-  let book = new Book(title.value, author.value, pages.value, read.value);
+  const title = document.getElementById('title');
+  const author = document.getElementById('author');
+  const pages = document.getElementById('pages');
+  const read = document.getElementById('status');
+  const book = new Book(title.value, author.value, pages.value, read.value);
   addBookToLibrary(book);
   storageBook(myLibrary);
   printBooks(myLibrary);
@@ -117,27 +113,13 @@ function addBook(e){
   form.classList.toggle('d-none');
 }
 
-if(localStorage.getItem('myLibrary2') === null){
+form.addEventListener('submit', addBook);
+
+if (localStorage.getItem('myLibrary2') === null) {
   addBookToLibrary(book1);
   addBookToLibrary(book2);
 } else {
   myLibrary = JSON.parse(localStorage.getItem('myLibrary2'));
 }
 
-function removeBook (bookName) {
-  const books = JSON.parse(localStorage.getItem('myLibrary2'))
-
-  books.forEach((book, index) => {
-    if(book.title === bookName) {
-      books.splice(index, 1);
-    }
-  })
-
-  localStorage.setItem('myLibrary2', JSON.stringify(books));
-  printBooks(books);
-}
- 
 printBooks(myLibrary);
-
-
-
