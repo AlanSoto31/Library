@@ -5,6 +5,8 @@
 Web app for storing books. Users can add and delete books to the Library, also change the status of the book in case if it was read or not. Books are displayed in the form
 of cards. Each book contain its title, author's name, number of pages, and read status.
 
+![screenshot](/screenshot.png)
+
 ## Built With
 
 - Bootstrap
@@ -12,7 +14,7 @@ of cards. Each book contain its title, author's name, number of pages, and read 
 
 ## Live Demo
 
-[Live Demo Link]()
+[Live Demo Link](https://alansoto31.github.io/Library/)
 
 ## Getting Started
 
