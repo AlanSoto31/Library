@@ -19,21 +19,18 @@ function storageBook(arr) {
 }
 
 function removeBook(bookName) {
-  const books = JSON.parse(localStorage.getItem('myLibrary2'));
+  myLibrary = JSON.parse(localStorage.getItem('myLibrary2'));
 
-  books.forEach((book, index) => {
+  myLibrary.forEach((book, index) => {
     if (book.title === bookName) {
-      books.splice(index, 1);
+      myLibrary.splice(index, 1);
     }
   });
 
-  localStorage.setItem('myLibrary2', JSON.stringify(books));
-  // printBooks(books);
+  localStorage.setItem('myLibrary2', JSON.stringify(myLibrary));
 }
 
 const listCon = document.getElementById('book-list-con');
-const book1 = new Book('The Hobbit', 'R.R.', '564', 'false');
-const book2 = new Book('It', 'Stephen King', '365', 'true');
 const btn = document.querySelector('#add-btn');
 const form = document.querySelector('form');
 
@@ -47,7 +44,6 @@ function printBooks(arr) {
     const li3 = document.createElement('li');
     const statusBtn = document.createElement('button');
     const deleteBtn = document.createElement('button');
-    // yLibrary = JSON.parse(localStorage.getItem('myLibrary2'));
 
     div.classList.add('card', 'm-5', 'border', 'border-dark', 'border-2', 'text-center');
     div.setAttribute('id', `book${index}`);
@@ -116,8 +112,7 @@ function addBook(e) {
 form.addEventListener('submit', addBook);
 
 if (localStorage.getItem('myLibrary2') === null) {
-  addBookToLibrary(book1);
-  addBookToLibrary(book2);
+  myLibrary = [];
 } else {
   myLibrary = JSON.parse(localStorage.getItem('myLibrary2'));
 }
