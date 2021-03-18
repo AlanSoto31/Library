@@ -1,36 +1,53 @@
+let myLibraryArr = [];
 
-let books = (() => {
+class Book {
+  constructor(title, author, pages, status) {
+    this.title = title;
+    this.author = author;
+    this.pages = pages;
+    this.status = status;
+  }
+}
 
-  // Public functions
+class Store {
+  static storeBook() {
+    localStorage.setItem('myLibraryStorage', JSON.stringify(myLibraryArr));
+    myLibraryArr = JSON.parse(localStorage.getItem('myLibraryStorage'));
+  }
 
-  const listCon = document.getElementById('book-list-con');
-  const addBtn = document.querySelector('#add-btn');
-  const form = document.querySelector('form');
-  let myLibraryArr = [];
-  
-  let create = (title, author, pages, status) => {
-    return {title, author, pages, status};
-  };
+  static removeBook(bookName) {
+    myLibraryArr = JSON.parse(localStorage.getItem('myLibraryStorage'));
 
-  let addToLibrary = (e) => {
+    myLibraryArr.forEach((book, index) => {
+      if (book.title === bookName) {
+        myLibraryArr.splice(index, 1);
+      }
+    });
+
+    localStorage.setItem('myLibraryStorage', JSON.stringify(myLibraryArr));
+  }
+}
+
+class UI {
+  static addToLibrary(e) {
+    const form = document.querySelector('form');
     e.preventDefault();
     const title = document.getElementById('title');
     const author = document.getElementById('author');
     const pages = document.getElementById('pages');
     const status = document.getElementById('status');
 
-    const book  = books.create(title.value, author.value, pages.value, status.value);
+    const book = new Book(title.value, author.value, pages.value, status.value);
     myLibraryArr.push(book);
+    Store.storeBook();
 
-    localStorage.setItem('myLibraryStorage', JSON.stringify(myLibraryArr));
-    myLibraryArr = JSON.parse(localStorage.getItem('myLibraryStorage'));
-    printBooks(myLibraryArr);
+    UI.printBooks(myLibraryArr);
 
     form.reset();
     form.classList.toggle('d-none');
-  };
+  }
 
-  let changeStatus = (status, bookTitle) => {
+  static changeStatus(status, bookTitle) {
     myLibraryArr.forEach((book) => {
       if (book.title === bookTitle) {
         if (status === 'I read it!') {
@@ -40,22 +57,18 @@ let books = (() => {
         }
         localStorage.setItem('myLibraryStorage', JSON.stringify(myLibraryArr));
         myLibraryArr = JSON.parse(localStorage.getItem('myLibraryStorage'));
-        printBooks(myLibraryArr);
+        UI.printBooks(myLibraryArr);
       }
     });
-  };
+  }
 
-
-
-  //Private functions
-
-  let printBooks = (arr) => {
+  static printBooks(arr) {
+    const listCon = document.getElementById('book-list-con');
     listCon.innerHTML = '';
-    arr.forEach((item, index) => {
-      let div = document.createElement('div');
+    arr.forEach((item) => {
+      const div = document.createElement('div');
       div.classList.add('card', 'm-5', 'border', 'border-dark', 'border-2', 'text-center');
-      div.innerHTML = 
-      `
+      div.innerHTML = `
       <ul class="list-group list-group-flush">
         <li class="list-group-item">${item.title}</li>
         <li class="list-group-item">${item.author}</li>
@@ -66,53 +79,38 @@ let books = (() => {
       `;
       listCon.appendChild(div);
     });
-  };
-
-  function removeBook(bookName) {
-    myLibraryArr = JSON.parse(localStorage.getItem('myLibraryStorage'));
-  
-    myLibraryArr.forEach((book, index) => {
-      if (book.title === bookName) {
-        myLibraryArr.splice(index, 1);
-      }
-    });
-  
-    localStorage.setItem('myLibraryStorage', JSON.stringify(myLibraryArr));
   }
+}
+
+const listCon = document.getElementById('book-list-con');
+const addBtn = document.querySelector('#add-btn');
+const form = document.querySelector('form');
 
 
-  if (localStorage.getItem('myLibraryStorage') === null) {
-    myLibraryArr = [];
-  } else {
-    myLibraryArr = JSON.parse(localStorage.getItem('myLibraryStorage'));
-    printBooks(myLibraryArr);
-  }
-
-
-  return {create, myLibraryArr, addToLibrary, listCon, removeBook, addBtn, form, changeStatus};
-  
-})();
-
-
-
+if (localStorage.getItem('myLibraryStorage') === null) {
+  myLibraryArr = [];
+} else {
+  myLibraryArr = JSON.parse(localStorage.getItem('myLibraryStorage'));
+  UI.printBooks(myLibraryArr);
+}
 
 // Events
 
-books.listCon.addEventListener('click', (e) => {
+addBtn.addEventListener('click', () => {
+  form.classList.toggle('d-none');
+});
+
+form.addEventListener('submit', UI.addToLibrary);
+
+listCon.addEventListener('click', (e) => {
   if (e.target.classList.contains('status-btn')) {
-   books.changeStatus(e.target.textContent, e.target.parentElement.firstChild.nextElementSibling.textContent);
-  } 
+    UI.changeStatus(e.target.textContent, e.target.parentElement.firstChild.nextElementSibling.textContent);
+  }
 });
 
-books.listCon.addEventListener('click', (e) => {
+listCon.addEventListener('click', (e) => {
   if (e.target.classList.contains('delete-btn')) {
-   books.removeBook(e.target.parentElement.firstChild.nextElementSibling.textContent);
-   e.target.parentElement.parentElement.remove(); 
- }
+    Store.removeBook(e.target.parentElement.firstChild.nextElementSibling.textContent);
+    e.target.parentElement.parentElement.remove();
+  }
 });
-
-books.addBtn.addEventListener('click', () => {
-  books.form.classList.toggle('d-none');
- });
-
- books.form.addEventListener('submit', books.addToLibrary);
